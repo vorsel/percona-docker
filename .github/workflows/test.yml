@@ -25,6 +25,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install realpath docker-ce docker-ce-cli containerd.io
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
@@ -34,3 +38,10 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+          echo never | sudo tee /sys/kernel/mm/transparent_hugepage/enabled >/dev/null
+          echo never | sudo tee /sys/kernel/mm/transparent_hugepage/defrag >/dev/null
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: ./test/detect-images.sh ${{ github.base_ref }} ${{ github.sha }}
+
