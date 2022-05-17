@@ -51,5 +51,5 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: ./test/detect-images.sh origin/${{ github.base_ref }} ${{ github.event.pull_request.head.sha }}
+        run: ./test/detect-images.sh ${{ github.base_ref }} ${{ github.event.pull_request.head.sha }}
 
