@@ -24,7 +24,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 2
-      - run: git checkout HEAD^
 
       - name: Dump GitHub context
         id: github_context_step
