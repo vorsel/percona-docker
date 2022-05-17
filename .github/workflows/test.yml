@@ -23,7 +23,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 2
+      - run: git checkout HEAD^
 
       - name: Dump GitHub context
         id: github_context_step
@@ -47,7 +48,6 @@ jobs:
           echo never | sudo tee /sys/kernel/mm/transparent_hugepage/enabled >/dev/null
           echo never | sudo tee /sys/kernel/mm/transparent_hugepage/defrag >/dev/null
           pwd
-          ls -laR
           git branch
 
       # Runs a single command using the runners shell
