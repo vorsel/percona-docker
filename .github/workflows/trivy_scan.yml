@@ -34,6 +34,7 @@ jobs:
           ls -la 
           pwd
           git --version
+          git remote -v
           for file in $(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }}); do
               echo -- $file
           done
