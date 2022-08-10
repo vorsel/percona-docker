@@ -33,6 +33,7 @@ jobs:
           ls -la ../
           ls -la 
           pwd
+          git --version
           for file in $(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }}); do
               echo -- $file
           done
