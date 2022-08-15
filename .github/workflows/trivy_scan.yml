@@ -40,9 +40,6 @@ jobs:
       - run: date
       - run: sleep 1
       - run: date
-Footer
-
-    
 
 #      - name: Run Trivy vulnerability scanner
 #        uses: aquasecurity/trivy-action@master
