@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  generate:
     permissions:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
@@ -20,18 +20,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - id: file_changes
-        uses: trilom/file-changes-action@v1.2.4
-        with:
-          output: 'txt'
-          fileOutput: 'txt'
-      - name: test
-        run: |
-          cat $HOME/files.txt
-
-      - name: Build an image from Dockerfile
-        run: |
+      - run: |
           set -o xtrace
           ls -la ../
           ls -la 
