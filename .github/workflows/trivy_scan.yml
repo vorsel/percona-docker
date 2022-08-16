@@ -1,59 +1,23 @@
-name: Scan Container for Security Issues
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
+name: Sample Run Include Syntax Json Format
+on: push
 jobs:
-  generate-tests:
-    name: Vulnerability scan
+  job1:
     runs-on: ubuntu-latest
     outputs:
-       matrix: ${{ steps.generate-tests.outputs.matrix }}
+       matrix: ${{ steps.setmatrix.outputs.matrix }}
     steps:
-      - name: percona/percona-docker repo checkout
-        id: generate-tests
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - run: |
-          set -o xtrace
-          ls -la ../
-          ls -la 
-          pwd
-          git --version
-          git remote -v
-          for file in $(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }}); do
-              echo -- $file
-          done
-          matrixStringifiedObject="{{\"run\":\"run1\"},{\"run\":\"run2\"}}"
-          echo "::set-output name=matrix::$matrixStringifiedObject"
-
-#          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
-  test:
+      - name: Set Dynamic Matrix
+        id: setmatrix
+        run: |
+           matrixStringifiedObject="{\"include\":[{\"run\":\"run1\"},{\"run\":\"run2\"}]}"
+           echo "::set-output name=matrix::$matrixStringifiedObject"
+  job2:
+    needs: job1
     runs-on: ubuntu-latest
-    needs: generate-tests
     strategy:
-      matrix: 
-        include: ${{ fromJson(needs.generate-tests.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.job1.outputs.matrix) }}
     steps:
-      - name: percona/percona-docker repo checkout
-        uses: actions/checkout@v3
-      - run: echo Run ${{ matrix.run }}
-      - run: date
-      - run: sleep 1
-      - run: date
-
-#      - name: Run Trivy vulnerability scanner
-#        uses: aquasecurity/trivy-action@master
-#        with:
-#          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
-#          format: 'table'
-#          exit-code: '1'
-#          ignore-unfixed: true
-#          vuln-type: 'os,library'
-#          severity: 'CRITICAL'
+    - run: echo Run ${{ matrix.run }}
+    - run: date
+    - run: sleep 1
+    - run: date
