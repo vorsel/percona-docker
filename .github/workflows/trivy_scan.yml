@@ -13,7 +13,7 @@ jobs:
     name: Vulnerability scan
     runs-on: ubuntu-latest
     outputs:
-       matrix: ${{ steps.setmatrix.outputs.matrix }}
+       matrix: ${{ steps.generate-tests.outputs.matrix }}
     steps:
       - name: percona/percona-docker repo checkout
         id: generate-tests
