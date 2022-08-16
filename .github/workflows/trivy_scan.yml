@@ -38,12 +38,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: generate-tests
-#    strategy:
-#      matrix: ${{fromJSON(needs.generate-tests.outputs.matrix)}}
+    strategy:
+      matrix: ${{fromJSON(needs.generate-tests.outputs.matrix)}}
     steps:
       - run: |
           set -o xtrace
-          jq . <<< "${{fromJSON(needs.generate-tests.outputs.matrix)}}"
+          jq . <<< "${{fromJSON(matrix)}}"
       - name: percona/percona-docker repo checkout
         uses: actions/checkout@v3
       - run: echo Run ${{ matrix.run }}
