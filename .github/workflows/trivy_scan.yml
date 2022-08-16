@@ -27,12 +27,10 @@ jobs:
           pwd
           git --version
           git remote -v
-          for file in $(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }}); do
-              echo -- $file
-          done
-          matrixStringifiedObject='{"include":[{"run":"run1"},{"run":"run2"}]}'
-          echo "::set-output name=matrix::$matrixStringifiedObject"
-          jq . <<< "$matrixStringifiedObject"
+          files=$(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }} | jq -R -s -c 'split("\n")[:-1]')
+          echo "::set-output name=matrix::$files"
+          jq . <<< "$files"
+          
 
 #          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
   test:
