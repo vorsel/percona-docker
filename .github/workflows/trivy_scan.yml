@@ -12,8 +12,11 @@ jobs:
   generate-tests:
     name: Vulnerability scan
     runs-on: ubuntu-latest
+    outputs:
+       matrix: ${{ steps.setmatrix.outputs.matrix }}
     steps:
       - name: percona/percona-docker repo checkout
+        id: generate-tests
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -27,6 +30,9 @@ jobs:
           for file in $(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }}); do
               echo -- $file
           done
+          matrixStringifiedObject="{\"include\":[{\"run\":\"run1\"},{\"run\":\"run2\"}]}"
+          echo "::set-output name=matrix::$matrixStringifiedObject"
+
 #          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
   test:
     runs-on: ubuntu-latest
