@@ -47,23 +47,22 @@ jobs:
           jq . <<<"$strategy" # sanity check / debugging aid
           echo "::set-output name=strategy::$strategy"
 
-
-#          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
   test:
     needs: generate-tests
     runs-on: ubuntu-latest
     strategy: ${{ fromJSON(needs.generate-tests.outputs.strategy) }}
+    name: ${{ matrix.name }}
     steps:
       - name: percona/percona-docker repo checkout
         uses: actions/checkout@v3
       - run: ${{ matrix.runs.build }}
 
-#      - name: Run Trivy vulnerability scanner
-#        uses: aquasecurity/trivy-action@master
-#        with:
-#          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
-#          format: 'table'
-#          exit-code: '1'
-#          ignore-unfixed: true
-#          vuln-type: 'os,library'
-#          severity: 'CRITICAL'
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ matrix.runs.test }}
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL'
