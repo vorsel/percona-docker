@@ -13,7 +13,7 @@ jobs:
     name: Vulnerability scan
     runs-on: ubuntu-latest
     outputs:
-       matrix: ${{ steps.get-changes.outputs.matrix }}
+       strategy: ${{ steps.get-changes.outputs.strategy }}
     steps:
       - name: percona/percona-docker repo checkout
         uses: actions/checkout@v3
@@ -23,33 +23,40 @@ jobs:
         id: get-changes
         run: |
           set -o xtrace
-          ls -la ../
-          ls -la 
-          pwd
-          git --version
-          git remote -v
-          files=$(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }} | jq -R -s -c 'split("\n")[:-1]')
-          echo "::set-output name=matrix::$files"
-          jq . <<< "$files"
-          
+          strategy='{"fail-fast":false,"matrix":{"include":[]}}'
+          files=$(git --no-pager diff --name-only origin/${{ github.base_ref }} ${{ github.sha }} | grep "\/Dockerfile")
+
+          for file in ${files}; do
+              product_name=$(echo ${file}|  cut -d '/' -f 1)
+              docker_tag="percona/${product_name}:${{ github.sha }}"
+              docker_build="docker build --no-cache -t ${docker_tag} ${product_name}"
+              strategy=$(echo ${strategy} | \
+                         jq -c \
+                           --arg docker_name "${docker_name}" \
+                           --arg docker_build "${docker_build}" \
+                           --arg docker_tag "${docker_tag}" \
+                             '.matrix.include += [
+                              .include
+                             | .name=$docker_name
+                             | .runs.build=$docker_build
+                             | .runs.test=$docker_tag
+                             ]'
+                         )
+          done
+
+          jq . <<<"$strategy" # sanity check / debugging aid
+          echo "::set-output name=strategy::$strategy"
+
 
 #          docker build -t docker.io/my-organization/my-app:${{ github.sha }} .
   test:
     needs: generate-tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix: 
-        include: ${{ fromJSON(needs.generate-tests.outputs.matrix) }}
+    strategy: ${{ fromJSON(needs.generate-tests.outputs.strategy) }}
     steps:
-      - run: |
-          set -o xtrace
-          jq . <<< "${{fromJSON(matrix)}}"
       - name: percona/percona-docker repo checkout
         uses: actions/checkout@v3
-      - run: echo Run ${{ matrix.run }}
-      - run: date
-      - run: sleep 1
-      - run: date
+      - run: ${{ matrix.runs.build }}
 
 #      - name: Run Trivy vulnerability scanner
 #        uses: aquasecurity/trivy-action@master
