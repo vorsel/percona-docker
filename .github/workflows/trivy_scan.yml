@@ -32,12 +32,12 @@ jobs:
               docker_build="docker build --no-cache -t ${docker_tag} ${product_name}"
               strategy=$(echo ${strategy} | \
                          jq -c \
-                           --arg docker_name "${docker_name}" \
+                           --arg product_name "${product_name}" \
                            --arg docker_build "${docker_build}" \
                            --arg docker_tag "${docker_tag}" \
                              '.matrix.include += [
                               .include
-                             | .name=$docker_name
+                             | .name=$product_name
                              | .runs.build=$docker_build
                              | .runs.test=$docker_tag
                              ]'
