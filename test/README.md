@@ -1,4 +1,4 @@
-# fork of [docker-library/official-images](https://github.com/docker-library/official-images/tree/master/test)
+# Fork of [docker-library/official-images](https://github.com/docker-library/official-images/tree/master/test)
 
 ## Running Tests
 
