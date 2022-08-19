@@ -34,4 +34,4 @@ for dockerfilePath in "${!dockerfilePaths[@]}"; do
 	echo 
 done
 
-echo "Everything OK"
+echo "Everything is OK"
