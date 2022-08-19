@@ -31,6 +31,7 @@ RUN set -ex; \
 ENV PERCONA_VERSION 5.6.51-rel91.0.1.el7
 
 RUN set -ex; \
+    yum update -y; \
     yum install -y \
         Percona-Server-server-56-${PERCONA_VERSION} \
         Percona-Server-tokudb-56-${PERCONA_VERSION} \

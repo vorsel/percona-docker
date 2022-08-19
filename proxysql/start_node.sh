@@ -13,6 +13,6 @@ docker run -d -p 3306:3306 -p 6032:6032 --net=$NETWORK_NAME --name=${CLUSTER_NAM
 	 -e MYSQL_PROXY_USER=proxyuser \
 	 -e MYSQL_PROXY_PASSWORD=s3cret \
         perconalab/proxysql
-echo "Started $(docker ps -l -q)"
+echo "ProxySQL Started $(docker ps -l -q)"
 
 docker logs -f $(docker ps -l -q)
